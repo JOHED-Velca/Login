@@ -1,9 +1,13 @@
 package GUIS;
 
+import com.mysql.cj.log.Log;
 import constants.CommonConstants;
+import db.MyJDBC;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -63,7 +67,7 @@ public class LoginFormGUI extends Form{
 
         add(passwordLabel);
         add(passwordField);
-        //-------------------------------------------- BUTTON --------------------------------------------
+        //-------------------------------------------- LOGIN BUTTON --------------------------------------------
         //create login button
         JButton loginButton = new JButton("Login");
         loginButton.setFont(new Font("Dialog", Font.BOLD, 18));
@@ -72,6 +76,27 @@ public class LoginFormGUI extends Form{
         loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         loginButton.setBackground(CommonConstants.TEXT_COLOR);
         loginButton.setBounds(125, 520, 250, 50);
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //get username
+                String username = usernameField.getText();
+
+                //get password
+                String password = new String(passwordField.getPassword());
+
+                //validate username and password with DB
+                if (MyJDBC.validateLogin(username, password)) {
+                    //login successful
+                    JOptionPane.showMessageDialog(LoginFormGUI.this,
+                            "Login Successful!");
+                }else {
+                    //login failed
+                    JOptionPane.showMessageDialog(LoginFormGUI.this,
+                            "Login Failed...");
+                }
+            }
+        });
         add(loginButton);
         //-------------------------------------------- REGISTER LABEL --------------------------------------------
         JLabel registerLabel = new JLabel("Not a user? Register Here!");

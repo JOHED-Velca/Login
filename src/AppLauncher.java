@@ -10,7 +10,7 @@ public class AppLauncher {
             @Override
             public void run() {
                 //instantiate a LoginFormGUI obj and make it visible
-//                new LoginFormGUI().setVisible(true);
+                new LoginFormGUI().setVisible(true);
 
                 //check user test
 //                System.out.println(MyJDBC.checkUser("username1"));
@@ -19,7 +19,7 @@ public class AppLauncher {
 //                System.out.println(MyJDBC.register("username1", "123"));
 
                 //check validate Login
-                System.out.println(MyJDBC.validateLogin("username1", "123"));
+//                System.out.println(MyJDBC.validateLogin("username1", "123"));
             }
         });
     }

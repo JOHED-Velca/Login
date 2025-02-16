@@ -1,9 +1,12 @@
 package GUIS;
 
 import constants.CommonConstants;
+import db.MyJDBC;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -87,6 +90,44 @@ public class RegisterFormGUI extends Form{
         registerButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         registerButton.setBackground(CommonConstants.TEXT_COLOR);
         registerButton.setBounds(125, 520, 250, 50);
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //get username
+                String username = usernameField.getText();
+
+                //get password
+                String password = new String(passwordField.getPassword());
+
+                //get re-password
+                String rePassword = new String(rePasswordField.getPassword());
+
+                //validate user input
+                if (validateUserInput(username, password, rePassword)) {
+                    //register user to the DB
+                    if (MyJDBC.register(username, password)) {
+                        //dispose of this gui
+                        RegisterFormGUI.this.dispose();
+
+                        //take user back to the login gui
+                        LoginFormGUI loginFormGUI = new LoginFormGUI();
+                        loginFormGUI.setVisible(true);
+
+                        //create a result dialog
+                        JOptionPane.showMessageDialog(loginFormGUI, "Account Registered Successfully!");
+                    }else {
+                        //register failed (probably due to username availability)
+                        JOptionPane.showMessageDialog(RegisterFormGUI.this,
+                                "Error: Username already in use.");
+                    }
+                }else {
+                    //invalid user input
+                    JOptionPane.showMessageDialog(RegisterFormGUI.this,
+                            "Error: Username must be at least 6 characters \n" +
+                            "and/or Passwords must match");
+                }
+            }
+        });
         add(registerButton);
         //-------------------------------------------- REGISTER LABEL --------------------------------------------
         JLabel loginLabel = new JLabel("Have an account? Login Here!");
@@ -108,5 +149,19 @@ public class RegisterFormGUI extends Form{
         loginLabel.setBounds(125, 600, 250, 30);
         add(loginLabel);
 
+    }
+
+    private boolean validateUserInput(String username, String password, String rePassword) {
+        //all fields must have a value
+        if (username.length() == 0 || password.length() == 0 || rePassword.length() == 0) return false;
+
+        //username has to ve at least 6 characters long
+        if (username.length() < 6) return false;
+
+        //password and re-password must be the same
+        if (!password.equals(rePassword)) return false;
+
+        //passes validation
+        return true;
     }
 }
